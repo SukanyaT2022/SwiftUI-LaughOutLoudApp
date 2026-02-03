@@ -11,7 +11,9 @@ import SwiftUI
 struct DailyJokeApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
+           
+          
         }
     }
 }
