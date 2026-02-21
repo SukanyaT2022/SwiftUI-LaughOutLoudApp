@@ -1,9 +1,4 @@
-//
-//  DailyJokeApp.swift
-//  DailyJoke
-//
-//  Created by TS2 on 1/30/26.
-//
+
 
 import SwiftUI
 
@@ -13,7 +8,6 @@ struct DailyJokeApp: App {
         WindowGroup {
             SplashView()
            
-          
         }
     }
 }
