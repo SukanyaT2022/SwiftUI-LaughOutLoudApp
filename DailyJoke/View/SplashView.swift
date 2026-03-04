@@ -59,7 +59,7 @@ struct SplashView: View {
             
             
             .navigationDestination(isPresented: $isActive) {
-                MainTabView() // Replace with your home screen
+                JokeSwipeView() // Replace with your home screen
             }
             .onAppear {
                 animateIn = true
