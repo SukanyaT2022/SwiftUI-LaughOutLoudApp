@@ -45,6 +45,11 @@
 			path = DailyJokeUITests;
 			sourceTree = "<group>";
 		};
+		215B006D2F5F24E000019567 /* New Folder */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "New Folder";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +80,7 @@
 		2125A6202F2D0BD9000354D2 = {
 			isa = PBXGroup;
 			children = (
+				215B006D2F5F24E000019567 /* New Folder */,
 				2125A62B2F2D0BD9000354D2 /* DailyJoke */,
 				2125A6392F2D0BDA000354D2 /* DailyJokeTests */,
 				2125A6432F2D0BDA000354D2 /* DailyJokeUITests */,
@@ -109,6 +115,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				2125A62B2F2D0BD9000354D2 /* DailyJoke */,
+				215B006D2F5F24E000019567 /* New Folder */,
 			);
 			name = DailyJoke;
 			packageProductDependencies = (
