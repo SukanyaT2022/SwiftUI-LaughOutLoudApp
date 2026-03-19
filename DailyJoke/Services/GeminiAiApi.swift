@@ -1,6 +1,12 @@
 import SwiftUI
 import Combine
 
+/// Single source for the working Postman/cURL setup (`…/models/{model}:generateContent`).
+private enum GeminiREST {
+    static let model = "gemini-flash-latest"
+    static let apiKey = "AIzaSyAHAy3d_bzMHkpeDyOM_ncB3G59Cxyrq0Q"
+}
+
 // MARK: - Model
 struct GeminiResponse: Codable {
     let candidates: [Candidate]
@@ -20,17 +26,14 @@ struct GeminiResponse: Codable {
 
 // MARK: - Service
 class GeminiService {
-    private let apiKey = "AIzaSyAjBA1MP067NgY9uGYi267G0XPKj1XvM70" // 🔑 Replace with your new key
-    private let model = "gemini-2.0-flash"
-    
     func generateContent(prompt: String) async throws -> String {
-        let urlString = "https://generativelanguage.googleapis.com/v1beta/models/\(model):generateContent"
+        let urlString = "\(AppConfig.apiBaseURL)/v1beta/models/\(GeminiREST.model):generateContent"
         guard let url = URL(string: urlString) else { throw URLError(.badURL) }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(apiKey, forHTTPHeaderField: "x-goog-api-key")
+        request.setValue(GeminiREST.apiKey, forHTTPHeaderField: "x-goog-api-key")
         
         let body: [String: Any] = [
             "contents": [
@@ -39,9 +42,20 @@ class GeminiService {
         ]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         
-        let (data, _) = try await URLSession.shared.data(for: request)
-        let response = try JSONDecoder().decode(GeminiResponse.self, from: data)
-        return response.candidates.first?.content.parts.first?.text ?? "No response"
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        guard (200...299).contains(http.statusCode) else {
+            let bodyText = String(data: data, encoding: .utf8) ?? ""
+            throw NSError(
+                domain: "Gemini",
+                code: http.statusCode,
+                userInfo: [NSLocalizedDescriptionKey: "HTTP \(http.statusCode): \(bodyText)"]
+            )
+        }
+        let decoded = try JSONDecoder().decode(GeminiResponse.self, from: data)
+        return decoded.candidates.first?.content.parts.first?.text ?? "No response"
     }
 }
 
@@ -126,12 +140,15 @@ struct ContentView: View {
     }
 }
 
+// AppConfig.apiBaseURL must be a full hostname like "https://generativelanguage.googleapis.com"
 func fetchJoke(completion: @escaping (String?) -> Void) {
-    let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBElmTCcau4c335JRAI1bjk15AYaF4XP3Y")!
+    let path = "/v1beta/models/\(GeminiREST.model):generateContent"
+    guard let url = URL(string: AppConfig.apiBaseURL + path) else { completion(nil); return }
 
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.addValue(GeminiREST.apiKey, forHTTPHeaderField: "x-goog-api-key")
 
     let body: [String: Any] = [
         "contents": [
@@ -148,7 +165,21 @@ func fetchJoke(completion: @escaping (String?) -> Void) {
     request.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
     URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data, error == nil else {
+        if let error {
+            #if DEBUG
+            print("fetchJoke:", error.localizedDescription)
+            #endif
+            completion(nil)
+            return
+        }
+        guard let data, let http = response as? HTTPURLResponse else {
+            completion(nil)
+            return
+        }
+        guard (200...299).contains(http.statusCode) else {
+            #if DEBUG
+            print("fetchJoke HTTP \(http.statusCode):", String(data: data, encoding: .utf8) ?? "")
+            #endif
             completion(nil)
             return
         }

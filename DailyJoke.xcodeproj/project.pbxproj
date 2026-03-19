@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		210AB8322F69B03A009BE80D /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 210AB8312F69B03A009BE80D /* Debug.xcconfig */; };
+		210AB8342F69B0EC009BE80D /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 210AB8332F69B0EC009BE80D /* Release.xcconfig */; };
+		210AB8382F69B559009BE80D /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210AB8372F69B541009BE80D /* AppConfig.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		2125A6372F2D0BDA000354D2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,14 +30,30 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		210AB8312F69B03A009BE80D /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		210AB8332F69B0EC009BE80D /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		210AB8372F69B541009BE80D /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		2125A6292F2D0BD9000354D2 /* DailyJoke.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DailyJoke.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2125A6362F2D0BDA000354D2 /* DailyJokeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DailyJokeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2125A6402F2D0BDA000354D2 /* DailyJokeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DailyJokeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		210AB8362F69B4A5009BE80D /* Exceptions for "DailyJoke" folder in "DailyJoke" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2125A6282F2D0BD9000354D2 /* DailyJoke */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2125A62B2F2D0BD9000354D2 /* DailyJoke */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				210AB8362F69B4A5009BE80D /* Exceptions for "DailyJoke" folder in "DailyJoke" target */,
+			);
 			path = DailyJoke;
 			sourceTree = "<group>";
 		};
@@ -80,6 +102,9 @@
 		2125A6202F2D0BD9000354D2 = {
 			isa = PBXGroup;
 			children = (
+				210AB8372F69B541009BE80D /* AppConfig.swift */,
+				210AB8332F69B0EC009BE80D /* Release.xcconfig */,
+				210AB8312F69B03A009BE80D /* Debug.xcconfig */,
 				215B006D2F5F24E000019567 /* New Folder */,
 				2125A62B2F2D0BD9000354D2 /* DailyJoke */,
 				2125A6392F2D0BDA000354D2 /* DailyJokeTests */,
@@ -219,6 +244,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				210AB8322F69B03A009BE80D /* Debug.xcconfig in Resources */,
+				210AB8342F69B0EC009BE80D /* Release.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +270,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				210AB8382F69B559009BE80D /* AppConfig.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,6 +306,7 @@
 /* Begin XCBuildConfiguration section */
 		2125A6482F2D0BDA000354D2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 210AB8312F69B03A009BE80D /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -341,6 +370,7 @@
 		};
 		2125A6492F2D0BDA000354D2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 210AB8332F69B0EC009BE80D /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -397,6 +427,7 @@
 		};
 		2125A64B2F2D0BDA000354D2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 210AB8312F69B03A009BE80D /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -406,6 +437,7 @@
 				DEVELOPMENT_TEAM = 2VXU5463LK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DailyJoke/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -431,6 +463,7 @@
 		};
 		2125A64C2F2D0BDA000354D2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 210AB8332F69B0EC009BE80D /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -440,6 +473,7 @@
 				DEVELOPMENT_TEAM = 2VXU5463LK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DailyJoke/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -465,6 +499,7 @@
 		};
 		2125A64E2F2D0BDA000354D2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 210AB8312F69B03A009BE80D /* Debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -486,6 +521,7 @@
 		};
 		2125A64F2F2D0BDA000354D2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 210AB8332F69B0EC009BE80D /* Release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -507,6 +543,7 @@
 		};
 		2125A6512F2D0BDA000354D2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 210AB8312F69B03A009BE80D /* Debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -526,6 +563,7 @@
 		};
 		2125A6522F2D0BDA000354D2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 210AB8332F69B0EC009BE80D /* Release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
