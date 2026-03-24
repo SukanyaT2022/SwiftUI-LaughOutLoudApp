@@ -4,7 +4,6 @@ import Combine
 /// Single source for the working Postman/cURL setup (`…/models/{model}:generateContent`).
 private enum GeminiREST {
     static let model = "gemini-flash-latest"
-    static let apiKey = "AIzaSyAHAy3d_bzMHkpeDyOM_ncB3G59Cxyrq0Q"
 }
 
 // MARK: - Model
@@ -30,10 +29,18 @@ class GeminiService {
         let urlString = "\(AppConfig.apiBaseURL)/v1beta/models/\(GeminiREST.model):generateContent"
         guard let url = URL(string: urlString) else { throw URLError(.badURL) }
         
+        guard let apiKey = KeychainService.loadGeminiApiKey() else {
+            throw NSError(
+                domain: "Gemini",
+                code: 401,
+                userInfo: [NSLocalizedDescriptionKey: "Missing Gemini API key in Keychain. Save it in the app first."]
+            )
+        }
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(GeminiREST.apiKey, forHTTPHeaderField: "x-goog-api-key")
+        request.setValue(apiKey, forHTTPHeaderField: "x-goog-api-key")
         
         let body: [String: Any] = [
             "contents": [
@@ -145,10 +152,18 @@ func fetchJoke(completion: @escaping (String?) -> Void) {
     let path = "/v1beta/models/\(GeminiREST.model):generateContent"
     guard let url = URL(string: AppConfig.apiBaseURL + path) else { completion(nil); return }
 
+    guard let apiKey = KeychainService.loadGeminiApiKey() else {
+        #if DEBUG
+        print("fetchJoke: Missing Gemini API key in Keychain.")
+        #endif
+        completion(nil)
+        return
+    }
+
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.addValue(GeminiREST.apiKey, forHTTPHeaderField: "x-goog-api-key")
+    request.addValue(apiKey, forHTTPHeaderField: "x-goog-api-key")
 
     let body: [String: Any] = [
         "contents": [

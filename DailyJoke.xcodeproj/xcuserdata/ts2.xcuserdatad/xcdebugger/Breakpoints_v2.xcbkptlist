@@ -34,50 +34,6 @@
             endingLineNumber = "45"
             landmarkName = "generateContent(prompt:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "B005D45B-8308-4B3A-B97F-6EF583EE99FE - de395f76da418ed9"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for DailyJoke.GeminiService.generateContent(prompt: Swift.String) async throws -&gt; Swift.String"
-                  moduleName = "DailyJoke.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ts2/Documents/swiftui2026/DailyJoke/DailyJoke/Services/GeminiAiApi.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "45"
-                  endingLineNumber = "45">
-               </Location>
-               <Location
-                  uuid = "B005D45B-8308-4B3A-B97F-6EF583EE99FE - 944207e7005ac3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for DailyJoke.GeminiService.generateContent(prompt: Swift.String) async throws -&gt; Swift.String"
-                  moduleName = "DailyJoke.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ts2/Documents/swiftui2026/DailyJoke/DailyJoke/Services/GeminiAiApi.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "45"
-                  endingLineNumber = "45">
-               </Location>
-               <Location
-                  uuid = "B005D45B-8308-4B3A-B97F-6EF583EE99FE - ac5abc7806630cc6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for DailyJoke.GeminiService.generateContent(prompt: Swift.String) async throws -&gt; Swift.String"
-                  moduleName = "DailyJoke.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ts2/Documents/swiftui2026/DailyJoke/DailyJoke/Services/GeminiAiApi.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "45"
-                  endingLineNumber = "45">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -126,6 +82,22 @@
             endingLineNumber = "158"
             landmarkName = "fetchJoke(completion:)"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "40FC01BF-4AA5-49A1-B1DF-003EE1ECB1D7"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DailyJoke/Utilities/KeychainService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
+            landmarkName = "read(service:account:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

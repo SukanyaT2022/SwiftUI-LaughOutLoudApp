@@ -9,7 +9,9 @@ enum AppConfig {
         if raw.contains("://") { return raw }
         return "https://" + raw
     }
-    
+    static var apiKey: String {
+        value(for: "API_KEY")
+    }
     static var appName: String {
         value(for: "APP_NAME")
     }

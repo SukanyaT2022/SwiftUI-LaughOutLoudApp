@@ -8,21 +8,29 @@
 import SwiftUI
 
 struct JokeSwipePracView: View {
+    @StateObject private var configManager = ConfigManager()
     @State private var jokeText: String = "Loading joke..."
     var body: some View {
    VStack {
+       
             Text("Hello, World!")
       Text(jokeText)
        //button from opai ai
        
        Button("Tell me a joke") {
+          
+        
            fetchJoke { joke in
                DispatchQueue.main.async {
                    self.jokeText = joke ?? "No joke today!"
                }
            }
        }
-        }
+        }// vstck close
+        
+   .onAppear {
+             configManager.fetchGeminiKey()
+         }
     }
 }
 
