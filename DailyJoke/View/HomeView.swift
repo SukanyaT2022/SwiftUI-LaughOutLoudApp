@@ -11,7 +11,7 @@ import FoundationModels
 
 struct HomeView: View {
     
-    let messgaeInputBox = ""
+    let messageInputBox = ""
     @State private var isLoading: Bool = false
     @State private var output: String = ""
     
@@ -26,7 +26,7 @@ struct HomeView: View {
             Text("DailyJoke")
               .fontWeight(.medium)
           
-          TextField(messgaeInputBox, text: .constant("Joke"))
+          TextField(messageInputBox, text: $output).textFieldStyle(.roundedBorder)
           // #region agent log
           
         }
@@ -41,15 +41,16 @@ struct HomeView: View {
     
     // model foundation below
     private func generate() {
-            isLoading = true
-// we call foundation model by using Task-- like call api
-            Task {
+        isLoading = true
+        // we call foundation model by using Task-- like call api
+        Task {
+            if #available(iOS 26.0, *) {
                 do {
                     let session = LanguageModelSession()
                     let response = try await session.respond(
                         to: "Tell me 10 kid joke."
                     )
-//await is for wait for the response
+                    // await is for wait for the response
                     await MainActor.run {
                         output = response.content
                         isLoading = false
@@ -60,8 +61,14 @@ struct HomeView: View {
                         isLoading = false
                     }
                 }
+            } else {
+                await MainActor.run {
+                    output = "This feature requires iOS 26 or later."
+                    isLoading = false
+                }
             }
-        }//close genarate func
+        }
+    }//close genarate func
  
 }
 

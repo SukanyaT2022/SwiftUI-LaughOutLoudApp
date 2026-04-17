@@ -1,6 +1,9 @@
 import Foundation
 import Security
-
+enum Gemini {
+    static let service = "DailyJoke.gemini"
+    static let account = "apiKey"
+}
 enum KeychainService {
     enum KeychainError: LocalizedError {
         case invalidValue(String)
@@ -69,21 +72,7 @@ enum KeychainService {
 }
 
 extension KeychainService {
-    private enum Gemini {
-        static let service = "DailyJoke.gemini"
-        static let account = "apiKey"
-    }
-
-    static func saveGeminiApiKey(_ apiKey: String) throws {
-        let trimmed = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else {
-            throw KeychainError.invalidValue("Gemini API key is empty.")
-        }
-        guard !trimmed.contains("$(") else {
-            throw KeychainError.invalidValue("Gemini API key is unresolved. Check your build setting for API_KEY.")
-        }
-        try save(service: Gemini.service, account: Gemini.account, value: trimmed)
-    }
+  
 
     static func loadGeminiApiKey() -> String? {
         read(service: Gemini.service, account: Gemini.account)

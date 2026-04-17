@@ -27,7 +27,7 @@ class ConfigManager: ObservableObject {
                    let key = data["GeminiKey"] as? String {
                     DispatchQueue.main.async {
                         do  {
-                        try KeychainService.save(service: "GeminiKey", account: "DailyJoke", value: key)
+                            try KeychainService.save(service: Gemini.service, account: Gemini.account, value: key)
                         }
                 catch {
                             print("Failed to save to keychain: \(error)")

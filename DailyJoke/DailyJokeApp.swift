@@ -6,6 +6,7 @@ import FirebaseCore
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    //connect firebase sdk
     FirebaseApp.configure()
 
     return true
@@ -21,7 +22,10 @@ struct DailyJokeApp: App {
   var body: some Scene {
     WindowGroup {
       NavigationView {
-        JokeSwipePracView()
+BottomTabView()
+          
+//        JokeSwipePracView()
+          
       }
     }
   }

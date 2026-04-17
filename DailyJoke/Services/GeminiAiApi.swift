@@ -148,13 +148,13 @@ struct ContentView: View {
 }
 
 // AppConfig.apiBaseURL must be a full hostname like "https://generativelanguage.googleapis.com"
-func fetchJoke(completion: @escaping (String?) -> Void) {
+func fetchJokes(completion: @escaping ([Joke]?) -> Void) {
     let path = "/v1beta/models/\(GeminiREST.model):generateContent"
     guard let url = URL(string: AppConfig.apiBaseURL + path) else { completion(nil); return }
 
     guard let apiKey = KeychainService.loadGeminiApiKey() else {
         #if DEBUG
-        print("fetchJoke: Missing Gemini API key in Keychain.")
+        print("fetchJokes: Missing Gemini API key in Keychain.")
         #endif
         completion(nil)
         return
@@ -170,8 +170,22 @@ func fetchJoke(completion: @escaping (String?) -> Void) {
             [
                 "parts": [
                     [
-                        "text": "Tell me 5 programmer jokes. Put each joke on a new line."
+                        "text": "Give me 20 mom and son jokes."
                     ]
+                ]
+            ]
+        ],
+        "generationConfig": [
+            "responseMimeType": "application/json",
+            "responseSchema": [
+                "type": "array",
+                "items": [
+                    "type": "object",
+                    "properties": [
+                        "question": ["type": "string"],
+                        "answer": ["type": "string"]
+                    ],
+                    "required": ["question", "answer"]
                 ]
             ]
         ]
@@ -182,29 +196,42 @@ func fetchJoke(completion: @escaping (String?) -> Void) {
     URLSession.shared.dataTask(with: request) { data, response, error in
         if let error {
             #if DEBUG
-            print("fetchJoke:", error.localizedDescription)
+            print("fetchJokes:", error.localizedDescription)
             #endif
             completion(nil)
             return
         }
+
         guard let data, let http = response as? HTTPURLResponse else {
             completion(nil)
             return
         }
+
         guard (200...299).contains(http.statusCode) else {
             #if DEBUG
-            print("fetchJoke HTTP \(http.statusCode):", String(data: data, encoding: .utf8) ?? "")
+            print("fetchJokes HTTP \(http.statusCode):", String(data: data, encoding: .utf8) ?? "")
             #endif
             completion(nil)
             return
         }
 
-        let decoded = try? JSONDecoder().decode(GeminiResponse.self, from: data)
-        let joke = decoded?.candidates.first?.content.parts.first?.text
-        completion(joke)
+        // 1. Decode outer Gemini response
+        guard let geminiResponse = try? JSONDecoder().decode(GeminiResponse.self, from: data),
+              let jsonString = geminiResponse.candidates.first?.content.parts.first?.text,
+              let jsonData = jsonString.data(using: .utf8) else {
+            #if DEBUG
+            print("fetchJokes: Failed to extract JSON string from Gemini response.")
+            #endif
+            completion(nil)
+            return
+        }
+
+        // 2. Decode the jokes array from the JSON string
+        let jokes = try? JSONDecoder().decode([Joke].self, from: jsonData)
+        completion(jokes)
+
     }.resume()
 }
-
 
 #Preview {
     ContentView()

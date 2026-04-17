@@ -31,192 +31,7 @@ struct JokeCardView: View {
     @State private var revealed: Bool = false
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            // Background Gradient
-            RoundedRectangle(cornerRadius: 28)
-                .fill(
-                    LinearGradient(
-                        colors: joke.gradient,
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 28)
-                        .fill(
-                            LinearGradient(
-                                colors: [.white.opacity(0.18), .clear],
-                                startPoint: .top,
-                                endPoint: .center
-                            )
-                        )
-                )
 
-            // Card Content
-            VStack(spacing: 0) {
-                // Top: category badge
-                HStack {
-                    Label(joke.category, systemImage: "face.smiling.fill")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 7)
-                        .background(.white.opacity(0.25))
-                        .clipShape(Capsule())
-                    Spacer()
-                    Text(joke.categoryEmoji)
-                        .font(.system(size: 32))
-                }
-                .padding(.horizontal, 22)
-                .padding(.top, 28)
-
-                Spacer()
-
-                // Joke Emoji
-                Text("🎭")
-                    .font(.system(size: 72))
-                    .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
-
-                Spacer()
-
-                // Setup text
-                Text(joke.setup)
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 28)
-                    .padding(.bottom, 16)
-
-                // Reveal punchline button / punchline
-                if revealed {
-                    Text(joke.punchline)
-                        .font(.system(size: 20, weight: .medium, design: .rounded))
-                        .foregroundColor(.white.opacity(0.95))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 28)
-                        .padding(.vertical, 14)
-                        .background(.black.opacity(0.18))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .padding(.horizontal, 22)
-                        .transition(.scale.combined(with: .opacity))
-                } else {
-                    Button {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
-                            revealed = true
-                        }
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "lightbulb.fill")
-                            Text("Reveal Punchline")
-                                .font(.system(size: 16, weight: .bold, design: .rounded))
-                        }
-                        .foregroundColor(joke.gradient.last ?? .white)
-                        .padding(.horizontal, 28)
-                        .padding(.vertical, 14)
-                        .background(.white)
-                        .clipShape(Capsule())
-                        .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 4)
-                    }
-                    .transition(.opacity)
-                }
-
-                Spacer(minLength: 20)
-
-                // Bottom info
-                VStack(alignment: .leading, spacing: 10) {
-                    Divider().overlay(Color.white.opacity(0.3))
-
-                    // Tags
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(joke.tags, id: \.self) { tag in
-                                Text(tag)
-                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(.white.opacity(0.2))
-                                    .clipShape(Capsule())
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal, 22)
-                .padding(.bottom, 24)
-            }
-
-            // 😂 FUNNY overlay (swipe right)
-            if swipeOverlay == .right {
-                VStack {
-                    HStack {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.green, lineWidth: 4)
-                            Text("😂 FUNNY")
-                                .font(.system(size: 30, weight: .black, design: .rounded))
-                                .foregroundColor(.green)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 8)
-                        }
-                        .padding(.leading, 24)
-                        .opacity(Double(swipeOffset.width / 80).clamped(to: 0...1))
-                        Spacer()
-                    }
-                    .padding(.top, 50)
-                    Spacer()
-                }
-            }
-
-            // 😐 SKIP overlay (swipe left)
-            if swipeOverlay == .left {
-                VStack {
-                    HStack {
-                        Spacer()
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.red, lineWidth: 4)
-                            Text("😐 SKIP")
-                                .font(.system(size: 30, weight: .black, design: .rounded))
-                                .foregroundColor(.red)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 8)
-                        }
-                        .padding(.trailing, 24)
-                        .opacity(Double((-swipeOffset.width) / 80).clamped(to: 0...1))
-                    }
-                    .padding(.top, 50)
-                    Spacer()
-                }
-            }
-
-            // 🤣 HILARIOUS overlay (swipe up)
-            if swipeOverlay == .up {
-                VStack {
-                    Spacer()
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.blue, lineWidth: 4)
-                        Text("🤣 HILARIOUS")
-                            .font(.system(size: 26, weight: .black, design: .rounded))
-                            .foregroundColor(.blue)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 8)
-                    }
-                    .opacity(Double((-swipeOffset.height) / 80).clamped(to: 0...1))
-                    .padding(.bottom, 190)
-                }
-            }
-        }
-        .frame(width: UIScreen.main.bounds.width - 40, height: UIScreen.main.bounds.height * 0.65)
-        .clipShape(RoundedRectangle(cornerRadius: 28))
-        .shadow(color: .black.opacity(0.2), radius: 22, x: 0, y: 12)
-        .offset(swipeOffset)
-        // ✅ No rotationEffect — card slides straight
-        .onChange(of: swipeOffset) { _ in
-            if abs(swipeOffset.width) > 30 || swipeOffset.height < -30 {
-                revealed = false
-            }
-        }
     }
 }
 
@@ -291,56 +106,57 @@ struct JokeSwipeView: View {
                                     .clipShape(Capsule())
                             }
                         }
-                    } else {
-                        // Background cards (stack effect)
-                        ForEach(Array(jokes.prefix(3).enumerated().reversed()), id: \.element.id) { index, joke in
-                            if index > 0 {
-                                RoundedRectangle(cornerRadius: 28)
-                                    .fill(
-                                        LinearGradient(
-                                            colors: joke.gradient,
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
-                                    )
-                                    .frame(
-                                        width: UIScreen.main.bounds.width - 40 - CGFloat(index * 16),
-                                        height: UIScreen.main.bounds.height * 0.65 - CGFloat(index * 16)
-                                    )
-                                    .offset(y: CGFloat(index * 10))
-                                    .opacity(0.6)
-                            }
-                        }
-
-                        // Top card (interactive)
-                        if let topJoke = jokes.first {
-                            JokeCardView(
-                                joke: topJoke,
-                                swipeOffset: $swipeOffset,
-                                swipeOverlay: $swipeOverlay
-                            )
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { value in
-                                        swipeOffset = value.translation
-                                        // ✅ No rotation assigned
-                                        if value.translation.width > 40 {
-                                            swipeOverlay = .right
-                                        } else if value.translation.width < -40 {
-                                            swipeOverlay = .left
-                                        } else if value.translation.height < -40 {
-                                            swipeOverlay = .up
-                                        } else {
-                                            swipeOverlay = .none
-                                        }
-                                    }
-                                    .onEnded { value in
-                                        handleSwipeEnd(translation: value.translation)
-                                    }
-                            )
-                            .animation(.interactiveSpring(), value: swipeOffset)
-                        }
                     }
+//                    } else {
+//                        // Background cards (stack effect)
+//                        ForEach(Array(jokes.prefix(3).enumerated().reversed()), id: \.element.id) { index, joke in
+//                            if index > 0 {
+//                                RoundedRectangle(cornerRadius: 28)
+//                                    .fill(
+//                                        LinearGradient(
+//                                            colors: joke.gradient,
+//                                            startPoint: .topLeading,
+//                                            endPoint: .bottomTrailing
+//                                        )
+//                                    )
+//                                    .frame(
+//                                        width: UIScreen.main.bounds.width - 40 - CGFloat(index * 16),
+//                                        height: UIScreen.main.bounds.height * 0.65 - CGFloat(index * 16)
+//                                    )
+//                                    .offset(y: CGFloat(index * 10))
+//                                    .opacity(0.6)
+//                            }
+//                        }
+//
+//                        // Top card (interactive)
+//                        if let topJoke = jokes.first {
+//                            JokeCardView(
+//                                joke: topJoke,
+//                                swipeOffset: $swipeOffset,
+//                                swipeOverlay: $swipeOverlay
+//                            )
+//                            .gesture(
+//                                DragGesture()
+//                                    .onChanged { value in
+//                                        swipeOffset = value.translation
+//                                        // ✅ No rotation assigned
+//                                        if value.translation.width > 40 {
+//                                            swipeOverlay = .right
+//                                        } else if value.translation.width < -40 {
+//                                            swipeOverlay = .left
+//                                        } else if value.translation.height < -40 {
+//                                            swipeOverlay = .up
+//                                        } else {
+//                                            swipeOverlay = .none
+//                                        }
+//                                    }
+//                                    .onEnded { value in
+//                                        handleSwipeEnd(translation: value.translation)
+//                                    }
+//                            )
+//                            .animation(.interactiveSpring(), value: swipeOffset)
+//                        }
+//                    }
                 }
                 .frame(maxHeight: .infinity)
 

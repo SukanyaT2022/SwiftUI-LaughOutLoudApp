@@ -7,14 +7,14 @@
 
 
 // MARK: - Models
-import SwiftUI
-import Foundation
-struct Joke: Identifiable {
-    let id = UUID()
-    let category: String
-    let categoryEmoji: String
-    let setup: String
-    let punchline: String
-    let gradient: [Color]
-    let tags: [String]
-}
+//import SwiftUI
+//import Foundation
+//struct Joke: Identifiable {
+//    let id = UUID()
+//    let category: String
+//    let categoryEmoji: String
+//    let setup: String
+//    let punchline: String
+//    let gradient: [Color]
+//    let tags: [String]
+//}
