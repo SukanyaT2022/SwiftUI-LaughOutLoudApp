@@ -10,7 +10,7 @@ import Foundation
 struct BottomTabView: View {
     var body: some View {
         TabView {
-            JokeSwipeView()
+           JokeSwipePracView()
                 .tabItem {
                     Image(systemName: "house")
                 

@@ -148,7 +148,7 @@ struct ContentView: View {
 }
 
 // AppConfig.apiBaseURL must be a full hostname like "https://generativelanguage.googleapis.com"
-func fetchJokes(completion: @escaping ([Joke]?) -> Void) {
+func fetchJokes(jokeRequest: String,completion: @escaping ([Joke]?) -> Void) {
     let path = "/v1beta/models/\(GeminiREST.model):generateContent"
     guard let url = URL(string: AppConfig.apiBaseURL + path) else { completion(nil); return }
 
@@ -170,7 +170,7 @@ func fetchJokes(completion: @escaping ([Joke]?) -> Void) {
             [
                 "parts": [
                     [
-                        "text": "Give me 20 mom and son jokes."
+                        "text": jokeRequest
                     ]
                 ]
             ]

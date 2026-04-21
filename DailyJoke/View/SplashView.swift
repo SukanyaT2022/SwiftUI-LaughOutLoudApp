@@ -24,14 +24,12 @@ struct SplashView: View {
                             
                             HStack(spacing: 10) {
                                 
-                                
-                                
                                 Image(systemName: "face.smiling")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 50, height: 50)
                                     .foregroundColor(.yellow)
-                                Text("DailyJoke")
+                                Text("More laugh with Daily Joke!")
                                     .font(.largeTitle)
                                     .fontWeight(.bold)
                                     .foregroundColor(.black)
@@ -60,7 +58,7 @@ struct SplashView: View {
                     
                     
                     .navigationDestination(isPresented: $isActive) {
-                        JokeSwipeView() // Replace with your home screen
+                    BottomTabView()
                     }
                     .onAppear {
                         animateIn = true

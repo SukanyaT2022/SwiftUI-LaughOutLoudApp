@@ -32,6 +32,7 @@ struct HomeView: View {
         }
         //button connect with model foundation
         Text(output)
+                
         Button(isLoading ? "Loading..." : "Tell me a joke") {
                         generate()
                     }

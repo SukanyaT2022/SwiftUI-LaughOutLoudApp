@@ -14,36 +14,12 @@ struct squareBoxShadowComp: View {
     var body: some View {
         ZStack {
             // FRONT
+
             VStack(spacing: 20) {
-                if #available(iOS 16.0, *) {
-                    Image(systemName: "questionmark")
-                        .imageScale(.large)
-                        .foregroundStyle(.white)
-                        .fontWeight(.heavy)
-                } else {
-                    // Fallback on earlier versions
-                };if #available(iOS 16.0, *) {
-                    Image(systemName: "questionmark")
-                        .imageScale(.large)
-                        .foregroundStyle(.white)
-                        .fontWeight(.heavy)
-                } else {
-                    // Fallback on earlier versions
-                };if #available(iOS 16.0, *) {
-                    Image(systemName: "questionmark")
-                        .imageScale(.large)
-                        .foregroundStyle(.white)
-                        .fontWeight(.heavy)
-                } else {
-                    // Fallback on earlier versions
-                };if #available(iOS 16.0, *) {
-                    Image(systemName: "questionmark")
-                        .imageScale(.large)
-                        .foregroundStyle(.white)
-                        .fontWeight(.heavy)
-                } else {
-                    // Fallback on earlier versions
-                }
+                            Image(systemName: "questionmark")
+                                .imageScale(.large)
+                                .foregroundStyle(.white)
+                                .fontWeight(.heavy)
 
                 Text(jokeQuestionVar)
                     .font(.title3)

@@ -4,21 +4,25 @@ import Foundation
 struct JokeSwipePracView: View {
     @StateObject private var configManager = ConfigManager()
     @State private var jokes: [Joke] = []
-
+    @State private var jokesRequestVar: String = " "
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             Text("Jokes")
                 .font(.title)
 
             Spacer(minLength: 0)
-
+            
+           VoiceAssistantView()
+                .padding(.top, 150)
+            
             CardStackView(jokes: $jokes)
                 .frame(height: 460)
 
             Spacer(minLength: 0)
-
+            InputCompView(text:$jokesRequestVar , placeholder: "What kind of joke do you want today?")
             Button("Tell me a joke") {
-                fetchJokes { newJokes in
+                //this ai api
+                fetchJokes(jokeRequest: jokesRequestVar) { newJokes in
                     guard let newJokes else { return }
                     DispatchQueue.main.async {
                         self.jokes = newJokes
@@ -27,14 +31,15 @@ struct JokeSwipePracView: View {
             }
             .padding(.bottom, 30)
         }
+        
         .onAppear {
             configManager.fetchGeminiKey()
-            fetchJokes { newJokes in
-                guard let newJokes else { return }
-                DispatchQueue.main.async {
-                    self.jokes = newJokes
-                }
-            }
+//            fetchJokes(jokeRequest: jokesRequestVar) { newJokes in
+//                guard let newJokes else { return }
+//                DispatchQueue.main.async {
+//                    self.jokes = newJokes
+//                }
+//            }
         }
     }
 }
