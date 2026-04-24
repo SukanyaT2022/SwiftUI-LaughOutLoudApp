@@ -2,6 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>UIFileSharingEnabled   </key>
+	<true/>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>So I can hear what you say</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Speak to make me laugh</string>
+	<key>App needs microphone access for voice input</key>
+	<string>App needs speech recognition to convert voice to text</string>
 	<key>API_BASE_URL</key>
 	<string>$(API_BASE_URL)</string>
 	<key>API_KEY</key>

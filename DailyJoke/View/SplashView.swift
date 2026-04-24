@@ -24,12 +24,12 @@ struct SplashView: View {
                             
                             HStack(spacing: 10) {
                                 
-                                Image(systemName: "face.smiling")
+                                Image(systemName: "face.smiling.inverse")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 50, height: 50)
                                     .foregroundColor(.yellow)
-                                Text("More laugh with Daily Joke!")
+                                Text("Yoon's daily joke!")
                                     .font(.largeTitle)
                                     .fontWeight(.bold)
                                     .foregroundColor(.black)

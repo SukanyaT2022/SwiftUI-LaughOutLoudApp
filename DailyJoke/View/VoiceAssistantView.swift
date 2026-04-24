@@ -4,9 +4,10 @@
 //
 //  Created by TS2 on 4/21/26.
 //
-
-
 import SwiftUI
+import AVFoundation
+import Speech
+
 
 // MARK: - Orb Animation View
 struct GlowingOrbView: View {
@@ -204,8 +205,16 @@ struct TypewriterText: View {
 struct TextInputBar: View {
     @Binding var text: String
     @Binding var isShowingKeyboard: Bool
-    var onSend: () -> Void
+    var onSend: (String) -> Void
 
+    private func sendText() {
+        let trimmed = text.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+        onSend(trimmed)
+        text = ""
+    }
+    
+    
     var body: some View {
         HStack(spacing: 12) {
             TextField("Type something funny...", text: $text)
@@ -213,10 +222,10 @@ struct TextInputBar: View {
                 .foregroundColor(.white)
                 .tint(Color(red: 0.2, green: 1.0, blue: 0.4))
                 .submitLabel(.send)
-                .onSubmit { onSend() }
+                .onSubmit { sendText() }
 
             if !text.isEmpty {
-                Button(action: onSend) {
+                Button(action: sendText){
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.system(size: 26))
                         .foregroundColor(Color(red: 0.2, green: 1.0, blue: 0.4))
@@ -253,7 +262,7 @@ struct TextInputBar: View {
 struct BottomTabBar: View {
     @Binding var isListening: Bool
     @Binding var isShowingKeyboard: Bool
-
+    @ObservedObject var speechRecognizer: SpeechRecognizer
     var body: some View {
         HStack {
             // Contacts
@@ -268,8 +277,14 @@ struct BottomTabBar: View {
             // Voice orb button
             Button(action: {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
-                    isListening.toggle()
-                    if isListening { isShowingKeyboard = false }
+                    if speechRecognizer.isRecording {
+                        speechRecognizer.stopListening()
+                        isListening = false
+                    } else {
+                        speechRecognizer.startListening()
+                        isListening = true
+                        isShowingKeyboard = false
+                    }
                 }
             }) {
                 ZStack {
@@ -309,20 +324,23 @@ struct BottomTabBar: View {
             Spacer()
 
             // Keyboard toggle
-            Button(action: {
+            Button {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
-                    isShowingKeyboard.toggle()
-                    if isShowingKeyboard { isListening = false }
+                    if speechRecognizer.isRecording {
+                        speechRecognizer.stopListening()
+                        isListening = false
+                    } else {
+                        speechRecognizer.startListening()
+                        isListening = true
+                        isShowingKeyboard = false
+                    }
                 }
-            }) {
-                Image(systemName: isShowingKeyboard ? "keyboard.chevron.compact.down" : "keyboard")
-                    .font(.system(size: 22, weight: .light))
-                    .foregroundColor(
-                        isShowingKeyboard
-                            ? Color(red: 0.2, green: 1.0, blue: 0.4)
-                            : .white.opacity(0.6)
-                    )
+            } label: {
+                Image(systemName: "keyboard")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundColor(.white.opacity(0.6))
             }
+
         }
         .padding(.horizontal, 40)
         .padding(.vertical, 16)
@@ -331,10 +349,14 @@ struct BottomTabBar: View {
 
 // MARK: - Main View
 struct VoiceAssistantView: View {
+    @StateObject private var speechRecognizer = SpeechRecognizer()  // ← ADD
+    @StateObject private var transcriptStore  = TranscriptStore()   // ← ADD
+    @State private var showTranscript: Bool   = false
     @State private var isListening: Bool = false
     @State private var isShowingKeyboard: Bool = false
     @State private var inputText: String = ""
     @FocusState private var isInputFocused: Bool
+    
 
     private let subtitlePhrases = [
         "I can tell you a joke",
@@ -350,13 +372,26 @@ struct VoiceAssistantView: View {
             backgroundLayer
 
             VStack(spacing: 0) {
-                // Status bar spacer
-                Spacer().frame(height: 60)
+                // Top bar with transcript counter
+                HStack {
+                    Spacer()
+                    Button { showTranscript = true } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "text.quote").font(.system(size: 14))
+                            Text("\(transcriptStore.entries.count)").font(.system(size: 13, weight: .semibold))
+                        }
+                        .foregroundColor(.white.opacity(0.55))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Capsule().fill(Color.white.opacity(0.08)))
+                    }
+                    .padding(.trailing, 20)
+                }
+                .padding(.top, 60)
 
                 // Subtitle typewriter
                 TypewriterText(phrases: subtitlePhrases)
-                    .padding(.bottom, 20)
-
+                    
                 // Main title
                 Text("How Can I Make\nYou Laugh Today?")
                     .font(.system(size: 36, weight: .bold, design: .rounded))
@@ -368,9 +403,48 @@ struct VoiceAssistantView: View {
 
                 Spacer()
 
+                if let error = speechRecognizer.errorMessage, !error.isEmpty {
+                    Text(error)
+                        .font(.system(size: 13, weight: .regular))
+                        .foregroundColor(.red.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 28)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.red.opacity(0.12))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.red.opacity(0.25), lineWidth: 1)
+                                )
+                        )
+                        .padding(.bottom, 8)
+                }
+
+                
+                // Live voice text — appears as user speaks
+                if isListening && !speechRecognizer.transcribedText.isEmpty {
+                    Text(speechRecognizer.transcribedText)
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundColor(.white.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14)
+                                .fill(Color.orange.opacity(0.12))
+                                .overlay(RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color.orange.opacity(0.3), lineWidth: 1))
+                        )
+                        .padding(.horizontal, 24)
+                        .transition(.opacity)
+                }
+
+                
+                
                 // Orb
                 GlowingOrbView(isAnimating: .constant(true), isListening: $isListening)
-                    .frame(width: 220, height: 220)
+                    .frame(width: 340, height: 340)
 
                 Spacer()
 
@@ -394,13 +468,14 @@ struct VoiceAssistantView: View {
                 if isShowingKeyboard {
                     TextInputBar(
                         text: $inputText,
-                        isShowingKeyboard: $isShowingKeyboard,
-                        onSend: {
-                            // Handle send
-                            inputText = ""
-                            isInputFocused = false
-                        }
-                    )
+                        isShowingKeyboard: $isShowingKeyboard
+                    ) { typedText in
+                        transcriptStore.add(text: typedText, source: .keyboard)  // saves to .txt
+                    }
+                    
+                    
+                    
+                    
                     .focused($isInputFocused)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 12)
@@ -409,12 +484,34 @@ struct VoiceAssistantView: View {
                 }
 
                 // Bottom bar
-                BottomTabBar(isListening: $isListening, isShowingKeyboard: $isShowingKeyboard)
-                    .padding(.bottom, 24)
+                BottomTabBar(
+                    isListening: $isListening,
+                    isShowingKeyboard: $isShowingKeyboard,
+                    speechRecognizer: speechRecognizer   // ← ADD
+                )
             }
         }
         .ignoresSafeArea()
         .preferredColorScheme(.dark)
+        
+        .onAppear {
+            // Ask for mic + speech permission when screen loads
+            speechRecognizer.requestPermissions { _ in }
+        }
+        .onChange(of: speechRecognizer.isRecording) { recording in
+            // When user stops speaking → save to transcript file
+            isListening = recording
+            if !recording && !speechRecognizer.transcribedText.isEmpty {
+                transcriptStore.add(
+                    text: speechRecognizer.transcribedText,
+                    source: .voice
+                )
+            }
+        }
+        .sheet(isPresented: $showTranscript) {
+            // Opens the history log sheet
+            TranscriptLogView(store: transcriptStore)
+        }
     }
 
     // MARK: Background
