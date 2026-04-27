@@ -11,3 +11,7 @@ struct Joke: Codable, Hashable{
     let question: String
     let answer: String
 }
+
+extension Joke: Identifiable {
+    var id: String { "\(question)|\(answer)" }
+}

@@ -31,14 +31,119 @@ struct JokeCardView: View {
     @State private var revealed: Bool = false
 
     var body: some View {
+        ZStack(alignment: .topTrailing) {
+            RoundedRectangle(cornerRadius: 28)
+                .fill(
+                    LinearGradient(
+                        colors: [Color(hex: "FFD59E"), Color(hex: "E75480")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
 
+            VStack(alignment: .leading, spacing: 14) {
+                Text("Q")
+                    .font(.system(size: 12, weight: .black, design: .rounded))
+                    .foregroundColor(.white.opacity(0.85))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.black.opacity(0.18))
+                    .clipShape(Capsule())
+
+                Text(joke.question)
+                    .font(.system(size: 24, weight: .black, design: .rounded))
+                    .foregroundColor(.white)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer(minLength: 0)
+
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 10) {
+                        Text("A")
+                            .font(.system(size: 12, weight: .black, design: .rounded))
+                            .foregroundColor(.white.opacity(0.85))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Color.black.opacity(0.18))
+                            .clipShape(Capsule())
+
+                        Text(revealed ? "Tap to hide" : "Tap to reveal")
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+
+                    if revealed {
+                        Text(joke.answer)
+                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white.opacity(0.95))
+                            .fixedSize(horizontal: false, vertical: true)
+                            .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    } else {
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(Color.black.opacity(0.14))
+                            .frame(height: 68)
+                            .overlay(
+                                Text("••••••••••")
+                                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white.opacity(0.35))
+                            )
+                            .transition(.opacity)
+                    }
+                }
+                .padding(.top, 8)
+            }
+            .padding(24)
+
+            // Swipe overlay
+            Group {
+                switch swipeOverlay {
+                case .right:
+                    Text("FUNNY")
+                        .font(.system(size: 28, weight: .black, design: .rounded))
+                        .foregroundColor(.green)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.green, lineWidth: 3))
+                        .rotationEffect(.degrees(-14))
+                        .padding(18)
+                case .left:
+                    Text("SKIP")
+                        .font(.system(size: 28, weight: .black, design: .rounded))
+                        .foregroundColor(.red)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.red, lineWidth: 3))
+                        .rotationEffect(.degrees(14))
+                        .padding(18)
+                case .up:
+                    Text("HILARIOUS")
+                        .font(.system(size: 24, weight: .black, design: .rounded))
+                        .foregroundColor(.blue)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 3))
+                        .rotationEffect(.degrees(-6))
+                        .padding(18)
+                case .none:
+                    EmptyView()
+                }
+            }
+        }
+        .frame(width: UIScreen.main.bounds.width - 40, height: UIScreen.main.bounds.height * 0.65)
+        .offset(swipeOffset)
+        .scaleEffect(1 - min(abs(swipeOffset.width) / 1800, 0.03))
+        .shadow(color: .black.opacity(0.35), radius: 24, x: 0, y: 14)
+        .onTapGesture {
+            withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
+                revealed.toggle()
+            }
+        }
     }
 }
 
 // MARK: - Main Swipe View
 
 struct JokeSwipeView: View {
-    @State private var jokeViewModel = JokeDataViewModel()
     @State private var jokes: [Joke] = []
     @State private var swipeOffset: CGSize = .zero
     @State private var swipeOverlay: SwipeDirection = .none
@@ -47,8 +152,8 @@ struct JokeSwipeView: View {
     @State private var hilariousCount: Int = 0
     @State private var lastAction: String = ""
 
-    init() {
-        _jokes = State(initialValue: JokeDataViewModel().sampleJokes)
+    init(jokes initialJokes: [Joke] = []) {
+        _jokes = State(initialValue: initialJokes)
     }
 
     var body: some View {
@@ -88,75 +193,56 @@ struct JokeSwipeView: View {
                             Text("You've seen all jokes!")
                                 .font(.system(size: 22, weight: .bold, design: .rounded))
                                 .foregroundColor(.white)
-                            Button {
-                                withAnimation {
-                                    jokes = jokeViewModel.sampleJokes.shuffled()
-                                    funnyCount = 0
-                                    skipCount = 0
-                                    hilariousCount = 0
-                                    lastAction = ""
-                                }
-                            } label: {
-                                Text("Shuffle & Restart 🔀")
-                                    .font(.system(size: 17, weight: .bold, design: .rounded))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 30)
-                                    .padding(.vertical, 14)
-                                    .background(Color(hex: "E75480"))
-                                    .clipShape(Capsule())
+                        }
+                    } else {
+                        // Background cards (stack effect)
+                        ForEach(Array(jokes.prefix(3).enumerated().reversed()), id: \.element.id) { index, _ in
+                            if index > 0 {
+                                RoundedRectangle(cornerRadius: 28)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [Color.white.opacity(0.08), Color.white.opacity(0.02)],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .frame(
+                                        width: UIScreen.main.bounds.width - 40 - CGFloat(index * 16),
+                                        height: UIScreen.main.bounds.height * 0.65 - CGFloat(index * 16)
+                                    )
+                                    .offset(y: CGFloat(index * 10))
+                                    .opacity(0.6)
                             }
                         }
+
+                        // Top card (interactive)
+                        if let topJoke = jokes.first {
+                            JokeCardView(
+                                joke: topJoke,
+                                swipeOffset: $swipeOffset,
+                                swipeOverlay: $swipeOverlay
+                            )
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        swipeOffset = value.translation
+                                        if value.translation.width > 40 {
+                                            swipeOverlay = .right
+                                        } else if value.translation.width < -40 {
+                                            swipeOverlay = .left
+                                        } else if value.translation.height < -40 {
+                                            swipeOverlay = .up
+                                        } else {
+                                            swipeOverlay = .none
+                                        }
+                                    }
+                                    .onEnded { value in
+                                        handleSwipeEnd(translation: value.translation)
+                                    }
+                            )
+                            .animation(.interactiveSpring(), value: swipeOffset)
+                        }
                     }
-//                    } else {
-//                        // Background cards (stack effect)
-//                        ForEach(Array(jokes.prefix(3).enumerated().reversed()), id: \.element.id) { index, joke in
-//                            if index > 0 {
-//                                RoundedRectangle(cornerRadius: 28)
-//                                    .fill(
-//                                        LinearGradient(
-//                                            colors: joke.gradient,
-//                                            startPoint: .topLeading,
-//                                            endPoint: .bottomTrailing
-//                                        )
-//                                    )
-//                                    .frame(
-//                                        width: UIScreen.main.bounds.width - 40 - CGFloat(index * 16),
-//                                        height: UIScreen.main.bounds.height * 0.65 - CGFloat(index * 16)
-//                                    )
-//                                    .offset(y: CGFloat(index * 10))
-//                                    .opacity(0.6)
-//                            }
-//                        }
-//
-//                        // Top card (interactive)
-//                        if let topJoke = jokes.first {
-//                            JokeCardView(
-//                                joke: topJoke,
-//                                swipeOffset: $swipeOffset,
-//                                swipeOverlay: $swipeOverlay
-//                            )
-//                            .gesture(
-//                                DragGesture()
-//                                    .onChanged { value in
-//                                        swipeOffset = value.translation
-//                                        // ✅ No rotation assigned
-//                                        if value.translation.width > 40 {
-//                                            swipeOverlay = .right
-//                                        } else if value.translation.width < -40 {
-//                                            swipeOverlay = .left
-//                                        } else if value.translation.height < -40 {
-//                                            swipeOverlay = .up
-//                                        } else {
-//                                            swipeOverlay = .none
-//                                        }
-//                                    }
-//                                    .onEnded { value in
-//                                        handleSwipeEnd(translation: value.translation)
-//                                    }
-//                            )
-//                            .animation(.interactiveSpring(), value: swipeOffset)
-//                        }
-//                    }
                 }
                 .frame(maxHeight: .infinity)
 
@@ -307,5 +393,8 @@ struct ActionButton: View {
 // MARK: - Preview
 
 #Preview {
-    JokeSwipeView()
+    JokeSwipeView(jokes: [
+        Joke(question: "Why did the chicken cross the road?", answer: "To get to the other side."),
+        Joke(question: "What do you call fake spaghetti?", answer: "An impasta!")
+    ])
 }

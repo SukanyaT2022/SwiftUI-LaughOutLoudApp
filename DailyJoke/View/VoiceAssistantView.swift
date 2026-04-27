@@ -351,7 +351,9 @@ struct BottomTabBar: View {
 struct VoiceAssistantView: View {
     @StateObject private var speechRecognizer = SpeechRecognizer()  // ← ADD
     @StateObject private var transcriptStore  = TranscriptStore()   // ← ADD
+    @StateObject private var jokeSwipeStore = JokeSwipeStore()
     @State private var showTranscript: Bool   = false
+    @State private var showJokeSwipe: Bool = false
     @State private var isListening: Bool = false
     @State private var isShowingKeyboard: Bool = false
     @State private var inputText: String = ""
@@ -501,16 +503,61 @@ struct VoiceAssistantView: View {
         .onChange(of: speechRecognizer.isRecording) { recording in
             // When user stops speaking → save to transcript file
             isListening = recording
+           
+        
+            if speechRecognizer.transcribedText.count > 500 { return }
             if !recording && !speechRecognizer.transcribedText.isEmpty {
                 transcriptStore.add(
                     text: speechRecognizer.transcribedText,
                     source: .voice
                 )
+
+                let voiceText = speechRecognizer.transcribedText
+                Task {
+                    await jokeSwipeStore.loadJokes(fromVoiceText: voiceText)
+                    if !jokeSwipeStore.jokes.isEmpty {
+                        showJokeSwipe = true
+                    }
+                }
             }
+            print("$test: \(speechRecognizer.transcribedText)")
         }
         .sheet(isPresented: $showTranscript) {
             // Opens the history log sheet
             TranscriptLogView(store: transcriptStore)
+                .frame(width: 400, height: 200)
+        }
+        .fullScreenCover(isPresented: $showJokeSwipe) {
+            ZStack {
+                JokeSwipeView(jokes: jokeSwipeStore.jokes)
+                    .ignoresSafeArea()
+
+                if jokeSwipeStore.isLoading {
+                    ProgressView("Loading jokes…")
+                        .padding()
+                        .background(.ultraThinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                } else if !jokeSwipeStore.errorMessage.isEmpty {
+                    VStack(spacing: 12) {
+                        Text(jokeSwipeStore.errorMessage)
+                            .font(.system(size: 14, weight: .semibold))
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.white)
+
+                        Button("Close") { showJokeSwipe = false }
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 10)
+                            .background(Color.white.opacity(0.18))
+                            .clipShape(Capsule())
+                    }
+                    .padding()
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .padding()
+                }
+            }
         }
     }
 

@@ -12,7 +12,7 @@ struct TranscriptLogView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(entry.text)
                         .font(.body)
-
+                     
                     Text(entry.source == .voice ? "Voice" : "Keyboard")
                         .font(.caption)
                         .foregroundColor(.gray)
