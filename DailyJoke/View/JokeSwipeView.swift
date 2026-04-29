@@ -5,7 +5,7 @@
 //  Created by TS2 on 3/4/26.
 //
 
-
+import SwiftData
 import SwiftUI
 
 // MARK: - Swipe Direction
@@ -28,7 +28,7 @@ struct JokeCardView: View {
     let joke: Joke
     @Binding var swipeOffset: CGSize
     @Binding var swipeOverlay: SwipeDirection
-    @State private var revealed: Bool = false
+    @State private var isFlipped: Bool = false
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -41,23 +41,24 @@ struct JokeCardView: View {
                     )
                 )
 
-            VStack(alignment: .leading, spacing: 14) {
-                Text("Q")
-                    .font(.system(size: 12, weight: .black, design: .rounded))
-                    .foregroundColor(.white.opacity(0.85))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(Color.black.opacity(0.18))
-                    .clipShape(Capsule())
+            ZStack {
+                // FRONT (Question)
+                VStack(alignment: .leading, spacing: 14) {
+                    Text("Q")
+                        .font(.system(size: 12, weight: .black, design: .rounded))
+                        .foregroundColor(.white.opacity(0.85))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color.black.opacity(0.18))
+                        .clipShape(Capsule())
 
-                Text(joke.question)
-                    .font(.system(size: 24, weight: .black, design: .rounded))
-                    .foregroundColor(.white)
-                    .fixedSize(horizontal: false, vertical: true)
+                    Text(joke.question)
+                        .font(.system(size: 24, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                Spacer(minLength: 0)
+                    Spacer(minLength: 0)
 
-                VStack(alignment: .leading, spacing: 10) {
                     HStack(spacing: 10) {
                         Text("A")
                             .font(.system(size: 12, weight: .black, design: .rounded))
@@ -67,32 +68,67 @@ struct JokeCardView: View {
                             .background(Color.black.opacity(0.18))
                             .clipShape(Capsule())
 
-                        Text(revealed ? "Tap to hide" : "Tap to reveal")
+                        Text("Tap to flip")
                             .font(.system(size: 13, weight: .semibold, design: .rounded))
                             .foregroundColor(.white.opacity(0.7))
                     }
 
-                    if revealed {
-                        Text(joke.answer)
-                            .font(.system(size: 18, weight: .semibold, design: .rounded))
-                            .foregroundColor(.white.opacity(0.95))
-                            .fixedSize(horizontal: false, vertical: true)
-                            .transition(.opacity.combined(with: .move(edge: .bottom)))
-                    } else {
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(Color.black.opacity(0.14))
-                            .frame(height: 68)
-                            .overlay(
-                                Text("••••••••••")
-                                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                                    .foregroundColor(.white.opacity(0.35))
-                            )
-                            .transition(.opacity)
-                    }
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(Color.black.opacity(0.14))
+                        .frame(height: 68)
+                        .overlay(
+                            Text("••••••••••")
+                                .font(.system(size: 24, weight: .bold, design: .rounded))
+                                .foregroundColor(.white.opacity(0.35))
+                        )
                 }
-                .padding(.top, 8)
+                .padding(24)
+                .opacity(isFlipped ? 0 : 1)
+
+                // BACK (Answer)
+                VStack(alignment: .leading, spacing: 14) {
+                    Text("A")
+                        .font(.system(size: 12, weight: .black, design: .rounded))
+                        .foregroundColor(.white.opacity(0.85))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color.black.opacity(0.18))
+                        .clipShape(Capsule())
+
+                    Text(joke.answer)
+                        .font(.system(size: 22, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Spacer(minLength: 0)
+
+                    HStack(spacing: 10) {
+                        Text("Q")
+                            .font(.system(size: 12, weight: .black, design: .rounded))
+                            .foregroundColor(.white.opacity(0.85))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Color.black.opacity(0.18))
+                            .clipShape(Capsule())
+
+                        Text("Tap to flip back")
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(Color.black.opacity(0.14))
+                        .frame(height: 68)
+                        .overlay(
+                            Text("Keep swiping")
+                                .font(.system(size: 16, weight: .bold, design: .rounded))
+                                .foregroundColor(.white.opacity(0.6))
+                        )
+                }
+                .padding(24)
+                .opacity(isFlipped ? 1 : 0)
+                .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
             }
-            .padding(24)
 
             // Swipe overlay
             Group {
@@ -130,12 +166,16 @@ struct JokeCardView: View {
             }
         }
         .frame(width: UIScreen.main.bounds.width - 40, height: UIScreen.main.bounds.height * 0.65)
+        .rotation3DEffect(
+            .degrees(isFlipped ? 180 : 0),
+            axis: (x: 0, y: 1, z: 0)
+        )
         .offset(swipeOffset)
         .scaleEffect(1 - min(abs(swipeOffset.width) / 1800, 0.03))
         .shadow(color: .black.opacity(0.35), radius: 24, x: 0, y: 14)
         .onTapGesture {
-            withAnimation(.spring(response: 0.25, dampingFraction: 0.85)) {
-                revealed.toggle()
+            withAnimation(.spring(response: 0.55, dampingFraction: 0.82)) {
+                isFlipped.toggle()
             }
         }
     }
@@ -296,7 +336,8 @@ struct JokeSwipeView: View {
         swipeOverlay = direction
         let offset: CGSize
         switch direction {
-        case .right: offset = CGSize(width: 600, height: 0)
+        case .right:
+            offset = CGSize(width: 600, height: 0)
         case .left:  offset = CGSize(width: -600, height: 0)
         case .up:    offset = CGSize(width: 0, height: -600)
         case .none:  offset = .zero

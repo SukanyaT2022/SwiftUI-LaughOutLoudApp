@@ -505,7 +505,7 @@ struct VoiceAssistantView: View {
             isListening = recording
            
         
-            if speechRecognizer.transcribedText.count > 500 { return }
+            if speechRecognizer.transcribedText.count > 20 { return }
             if !recording && !speechRecognizer.transcribedText.isEmpty {
                 transcriptStore.add(
                     text: speechRecognizer.transcribedText,
