@@ -405,23 +405,23 @@ struct VoiceAssistantView: View {
 
                 Spacer()
 
-                if let error = speechRecognizer.errorMessage, !error.isEmpty {
-                    Text(error)
-                        .font(.system(size: 13, weight: .regular))
-                        .foregroundColor(.red.opacity(0.9))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 28)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.red.opacity(0.12))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.red.opacity(0.25), lineWidth: 1)
-                                )
-                        )
-                        .padding(.bottom, 8)
-                }
+//                if let error = speechRecognizer.errorMessage, !error.isEmpty {
+//                    Text(error)
+//                        .font(.system(size: 13, weight: .regular))
+//                        .foregroundColor(.red.opacity(0.9))
+//                        .multilineTextAlignment(.center)
+//                        .padding(.horizontal, 28)
+//                        .padding(.vertical, 8)
+//                        .background(
+//                            RoundedRectangle(cornerRadius: 12)
+//                                .fill(Color.red.opacity(0.12))
+//                                .overlay(
+//                                    RoundedRectangle(cornerRadius: 12)
+//                                        .stroke(Color.red.opacity(0.25), lineWidth: 1)
+//                                )
+//                        )
+//                        .padding(.bottom, 8)
+//                }
 
                 
                 // Live voice text — appears as user speaks
@@ -505,7 +505,8 @@ struct VoiceAssistantView: View {
             isListening = recording
            
         
-            if speechRecognizer.transcribedText.count > 20 { return }
+            // Ignore very short clips; allow normal-length phrases.
+            if speechRecognizer.transcribedText.trimmingCharacters(in: .whitespacesAndNewlines).count < 3 { return }
             if !recording && !speechRecognizer.transcribedText.isEmpty {
                 transcriptStore.add(
                     text: speechRecognizer.transcribedText,
@@ -527,7 +528,7 @@ struct VoiceAssistantView: View {
             TranscriptLogView(store: transcriptStore)
                 .frame(width: 400, height: 200)
         }
-        .fullScreenCover(isPresented: $showJokeSwipe) {
+        .sheet(isPresented: $showJokeSwipe) {
             ZStack {
                 JokeSwipeView(jokes: jokeSwipeStore.jokes)
                     .ignoresSafeArea()

@@ -165,7 +165,7 @@ struct JokeCardView: View {
                 }
             }
         }
-        .frame(width: UIScreen.main.bounds.width - 40, height: UIScreen.main.bounds.height * 0.65)
+        .frame(width: UIScreen.main.bounds.width - 40, height: UIScreen.main.bounds.height * 0.4)
         .rotation3DEffect(
             .degrees(isFlipped ? 180 : 0),
             axis: (x: 0, y: 1, z: 0)
@@ -195,7 +195,7 @@ struct JokeSwipeView: View {
     init(jokes initialJokes: [Joke] = []) {
         _jokes = State(initialValue: initialJokes)
     }
-
+@State private var rotateVar : Bool = false
     var body: some View {
         ZStack {
             // Background
@@ -214,10 +214,26 @@ struct JokeSwipeView: View {
                             .foregroundColor(.white.opacity(0.5))
                     }
                     Spacer()
+                    
                     HStack(spacing: 14) {
-                        StatBadge(emoji: "😂", count: funnyCount, color: .green)
-                        StatBadge(emoji: "🤣", count: hilariousCount, color: .blue)
-                        StatBadge(emoji: "😐", count: skipCount, color: .red)
+//                        arrow down on top right-animation circle
+                        ZStack{
+                        Image(systemName:"arrow.down")
+                             .resizable()
+                             .frame(width: 30, height: 30)
+                             .foregroundColor(.blue)
+                             Circle()
+                                .stroke(lineWidth: 5)
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(.red)
+                                .rotationEffect(.degrees(rotateVar ? 360: 0))
+                                .animation(.linear(duration: 2).repeatForever(autoreverses: false),value: rotateVar)
+                                
+                                           
+                        }
+//                        StatBadge(emoji: "😂", count: funnyCount, color: .green)
+//                        StatBadge(emoji: "🤣", count: hilariousCount, color: .blue)
+//                        StatBadge(emoji: "😐", count: skipCount, color: .red)
                     }
                 }
                 .padding(.horizontal, 24)
@@ -248,7 +264,7 @@ struct JokeSwipeView: View {
                                     )
                                     .frame(
                                         width: UIScreen.main.bounds.width - 40 - CGFloat(index * 16),
-                                        height: UIScreen.main.bounds.height * 0.65 - CGFloat(index * 16)
+                                        height: UIScreen.main.bounds.height * 0.4 - CGFloat(index * 16)
                                     )
                                     .offset(y: CGFloat(index * 10))
                                     .opacity(0.6)
@@ -297,6 +313,9 @@ struct JokeSwipeView: View {
 
                 // Action Buttons
                 HStack(spacing: 20) {
+             
+               
+                    
                     ActionButton(emoji: "😐", color: Color(hex: "E74C3C"), size: 56) {
                         triggerSwipe(direction: .left)
                     }
@@ -310,6 +329,9 @@ struct JokeSwipeView: View {
                 .padding(.horizontal, 40)
                 .padding(.vertical, 20)
             }
+        }
+        .onAppear {
+            rotateVar = true
         }
     }
 

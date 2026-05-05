@@ -13,6 +13,7 @@ class SpeechRecognizer: NSObject, ObservableObject {
     private let audioEngine = AVAudioEngine()
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var task: SFSpeechRecognitionTask?
+    private var maxDurationWorkItem: DispatchWorkItem?
 
     // MARK: - Permission
     func requestPermissions(completion: @escaping (Bool) -> Void) {
@@ -89,10 +90,22 @@ class SpeechRecognizer: NSObject, ObservableObject {
             errorMessage = "Audio engine failed: \(error.localizedDescription)"
             stopListening()
         }
+
+        // Auto-stop after 5 seconds so the user can speak briefly,
+        // then we can process the transcript.
+        maxDurationWorkItem?.cancel()
+        let item = DispatchWorkItem { [weak self] in
+            self?.stopListening()
+        }
+        maxDurationWorkItem = item
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: item)
     }
 
     // MARK: - Stop Listening
     func stopListening() {
+        maxDurationWorkItem?.cancel()
+        maxDurationWorkItem = nil
+
         if audioEngine.isRunning {
             audioEngine.stop()
         }
