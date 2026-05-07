@@ -218,27 +218,18 @@ struct JokeSwipeView: View {
                     HStack(spacing: 14) {
 //                        arrow down on top right-animation circle
                         ZStack{
-                        Image(systemName:"arrow.down")
-                             .resizable()
-                             .frame(width: 30, height: 30)
-                             .foregroundColor(.blue)
-                             Circle()
-                                .stroke(lineWidth: 5)
-                                .frame(width: 50, height: 50)
-                                .foregroundColor(.red)
-                                .rotationEffect(.degrees(rotateVar ? 360: 0))
-                                .animation(.linear(duration: 2).repeatForever(autoreverses: false),value: rotateVar)
-                                
-                                           
+                            ArrowDownAnimationComp()
                         }
 //                        StatBadge(emoji: "😂", count: funnyCount, color: .green)
 //                        StatBadge(emoji: "🤣", count: hilariousCount, color: .blue)
 //                        StatBadge(emoji: "😐", count: skipCount, color: .red)
                     }
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 12)
+//                header arrow and text jokeswip title padding
+             .padding(.horizontal, 30)
+             .padding(.bottom,100)
+//                .padding(.top, 16)
+//                .padding(.bottom, 12)
 
                 // Cards stack
                 ZStack {
@@ -273,11 +264,13 @@ struct JokeSwipeView: View {
 
                         // Top card (interactive)
                         if let topJoke = jokes.first {
+//                            orange box cart view
                             JokeCardView(
                                 joke: topJoke,
                                 swipeOffset: $swipeOffset,
                                 swipeOverlay: $swipeOverlay
                             )
+                            .padding(.bottom,140)
                             .gesture(
                                 DragGesture()
                                     .onChanged { value in
@@ -300,7 +293,8 @@ struct JokeSwipeView: View {
                         }
                     }
                 }
-                .frame(maxHeight: .infinity)
+//                height of the whole sheet screen
+                .frame(height:500)
 
                 // Last action feedback
                 if !lastAction.isEmpty {
@@ -312,22 +306,19 @@ struct JokeSwipeView: View {
                 }
 
                 // Action Buttons
-                HStack(spacing: 20) {
-             
-               
-                    
-                    ActionButton(emoji: "😐", color: Color(hex: "E74C3C"), size: 56) {
-                        triggerSwipe(direction: .left)
-                    }
-                    ActionButton(emoji: "🤣", color: Color(hex: "3498DB"), size: 48) {
-                        triggerSwipe(direction: .up)
-                    }
-                    ActionButton(emoji: "😂", color: Color(hex: "2ECC71"), size: 56) {
-                        triggerSwipe(direction: .right)
-                    }
-                }
-                .padding(.horizontal, 40)
-                .padding(.vertical, 20)
+//                HStack(spacing: 20) {
+//            ActionButton(emoji: "😐", color: Color(hex: "E74C3C"), size: 56) {
+//                        triggerSwipe(direction: .left)
+//                    }
+//                    ActionButton(emoji: "🤣", color: Color(hex: "3498DB"), size: 48) {
+//                        triggerSwipe(direction: .up)
+//                    }
+//                    ActionButton(emoji: "😂", color: Color(hex: "2ECC71"), size: 56) {
+//                        triggerSwipe(direction: .right)
+//                    }
+//                }
+//                .padding(.horizontal, 40)
+//                .padding(.vertical, 20)
             }
         }
         .onAppear {

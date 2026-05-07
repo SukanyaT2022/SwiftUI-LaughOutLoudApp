@@ -8,7 +8,9 @@ import SwiftUI
 import Foundation
 struct FavouriteView: View {
     var body: some View {
-        Text("FavouriteView")
-        
+        VStack{
+            FavouriteCardComp()
+        }
+    
     }
 }

@@ -494,7 +494,7 @@ struct VoiceAssistantView: View {
             }
         }
         .ignoresSafeArea()
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.light)
         
         .onAppear {
             // Ask for mic + speech permission when screen loads
