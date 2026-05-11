@@ -16,14 +16,17 @@ struct ButtonComp: View {
             Button(action: action) {
                 HStack(spacing: 12) {
                     Image(systemName: systemImage)
-                        .font(.system(size: 20, weight: .medium))
+                          .font(.system(size: 16, weight: .medium))
+//                    
+//                    Image(systemName: systemImage)
+//                        .font(.system(size: 20, weight: .medium))
                     
                     Text(title)
                         .font(.system(size: 18, weight: .semibold))
                 }
                 .foregroundColor(.primary)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(Color.gray.opacity(0.3), lineWidth: 1)
@@ -31,6 +34,7 @@ struct ButtonComp: View {
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                 )
             }
+            .frame(height: 60)
             .buttonStyle(PlainButtonStyle()) // Prevents default blue tinting
         }
 }

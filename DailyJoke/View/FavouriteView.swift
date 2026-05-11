@@ -11,6 +11,7 @@ struct FavouriteView: View {
         VStack{
             FavouriteCardComp()
         }
+        .padding(20)
     
     }
 }
