@@ -28,7 +28,7 @@ struct JokeCardView: View {
     let joke: Joke
     @Binding var swipeOffset: CGSize
     @Binding var swipeOverlay: SwipeDirection
-    @State private var isFlipped: Bool = false
+    @Binding var isFlipped: Bool
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -191,7 +191,7 @@ struct JokeSwipeView: View {
     @State private var skipCount: Int = 0
     @State private var hilariousCount: Int = 0
     @State private var lastAction: String = ""
-
+    @State private var isFlipped: Bool = false
     init(jokes initialJokes: [Joke] = []) {
         _jokes = State(initialValue: initialJokes)
     }
@@ -264,11 +264,11 @@ struct JokeSwipeView: View {
 
                         // Top card (interactive)
                         if let topJoke = jokes.first {
-//                            orange box cart view
                             JokeCardView(
                                 joke: topJoke,
                                 swipeOffset: $swipeOffset,
-                                swipeOverlay: $swipeOverlay
+                                swipeOverlay: $swipeOverlay,
+                                isFlipped: $isFlipped
                             )
                             .padding(.bottom,140)
                             .gesture(
@@ -323,6 +323,7 @@ struct JokeSwipeView: View {
         }
         .onAppear {
             rotateVar = true
+            isFlipped = false
         }
     }
 
@@ -378,11 +379,13 @@ struct JokeSwipeView: View {
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             removeTopCard(direction: direction)
+            //afte swipe the card go back to fasle question again
+            isFlipped = false
         }
     }
 
     func removeTopCard(direction: SwipeDirection) {
-        guard !jokes.isEmpty else { return }
+        guard let topJoke = jokes.first else { return }
         jokes.removeFirst()
         withAnimation(.spring()) {
             swipeOffset = .zero
@@ -392,6 +395,7 @@ struct JokeSwipeView: View {
         case .right:
             funnyCount += 1
             lastAction = "😂 Funny!"
+            FavouriteJokeFirestoreService.appendLikedJoke(topJoke)
         case .left:
             skipCount += 1
             lastAction = "😐 Skipped"
@@ -402,8 +406,13 @@ struct JokeSwipeView: View {
             break
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            withAnimation { lastAction = "" }
+            withAnimation { lastAction = ""
+            
+            }
+            
+            
         }
+        
     }
 }
 

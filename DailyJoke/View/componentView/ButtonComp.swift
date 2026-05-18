@@ -17,12 +17,10 @@ struct ButtonComp: View {
                 HStack(spacing: 12) {
                     Image(systemName: systemImage)
                           .font(.system(size: 16, weight: .medium))
-//                    
-//                    Image(systemName: systemImage)
-//                        .font(.system(size: 20, weight: .medium))
+                          .frame(width: 20, height: 20)
                     
                     Text(title)
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(.system(size: 16, weight: .semibold))
                 }
                 .foregroundColor(.primary)
                 .padding(.horizontal, 12)

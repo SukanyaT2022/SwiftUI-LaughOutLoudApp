@@ -8,61 +8,76 @@
 import SwiftUI
 
 struct FavouriteCardComp: View {
+    let singleJoke: Joke
     var body: some View {
-        VStack(){
-        HStack{
-            Image("cat")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 70, height: 70)
-                .clipShape(Circle())
-                .overlay(Circle().stroke(style: StrokeStyle(lineWidth: 4)))
-                .shadow(radius: 10)
-                .padding(.trailing,5)
-            VStack{
-                Text("Question")
-                Text("Answer")
-            }
-            Spacer()
-        }//close hstack on top
-       
-//            Spacer()
-            HStack(spacing:10){
-                ButtonComp(title: "Share", systemImage: "point.3.connected.trianglepath.dotted") {
-                    print("Share tapped!")
-                }
-          
-                
-                ButtonComp(title: "open", systemImage:"square.and.arrow.up") {
-                    print("Share tapped!")
-                }
-         
-                ButtonComp(title: "Like", systemImage:"heart.fill") {
-                    print("Share tapped!")
+        ZStack(alignment: .topTrailing) {
+            // Card content
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .top, spacing: 12) {
+                    Image("cat")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 70, height: 70)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(style: StrokeStyle(lineWidth: 4)))
+                        .shadow(radius: 10)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(singleJoke.question)
+                            .font(.headline)
+                        Text(singleJoke.answer)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 
-           
-            }//close below hstack
-            .frame(width:UIScreen.main.bounds.width-60)
+                HStack(spacing: 10) {
+                    
+                    ShareLink(
+                        item: URL(string: "https://www.google.com")!,
+                        subject: Text(singleJoke.question),
+                        message: Text("\(singleJoke.question)\n\(singleJoke.answer)")
+                    ) {
+                        DummyButtonComp(
+                            title: "Share",
+                            systemImage: "square.and.arrow.up"
+                        )
+                    }
+               
             
-        }//close v stack
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white, lineWidth: 2)
-        )
-        .shadow(color: .black.opacity(0.3), radius: 8, x: 0, y: 4)
-       
-     
-        
-        
-    }
-}
-#Preview {
-    FavouriteCardComp()
-}
+                ButtonComp(title: "Like", systemImage: "heart.fill") {
+                    print("Like tapped!")
+                }
+                }
+            
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(20)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.white, lineWidth: 2)
+            )
+            .shadow(color: .black.opacity(0.3), radius: 8, x: 0, y: 4)
 
+            // Close button overlay pinned to top-right of the card
+            HStack(spacing: 0) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .padding(8)
+//                    .background(.thinMaterial, in: Circle())
+                    .offset(x:10, y:-10)
+            }
+            .padding(8)
+        }
+    }
+
+#Preview {
+    FavouriteCardComp(singleJoke: Joke(question: "Why did the chicken cross the road?", answer: "To get to the other side."))
+}

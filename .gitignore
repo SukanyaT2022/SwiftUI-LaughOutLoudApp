@@ -1,3 +1,4 @@
 ## Xcode build configuration
 *.xcconfig
 GoogleService-Info.plist
+.derivedData/
