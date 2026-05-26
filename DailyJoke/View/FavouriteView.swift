@@ -11,10 +11,12 @@ struct FavouriteView: View {
     var body: some View {
    ScrollView{
             
-     
         VStack{
             ForEach(jokes) { joke in
-                FavouriteCardComp(singleJoke: joke)
+                FavouriteCardComp(singleJoke: joke) { joke in
+                    //delete ony that box or that id -- do the delete that joke from ui-line below
+                    jokes.removeAll { $0.id == joke.id }
+                }
             }
          
         }

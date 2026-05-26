@@ -18,7 +18,8 @@ enum FavouriteJokeFirestoreService {
     private static var docRef: DocumentReference {
         db.collection(collectionName).document(documentId)
     }
-
+    
+//func apend joke will add save on firebase
     /// Appends one liked joke. Duplicate maps (same id/question/answer) are ignored by Firestore `arrayUnion`.
     static func appendLikedJoke(_ joke: Joke, completion: ((Error?) -> Void)? = nil) {
         let entry: [String: Any] = [
@@ -38,6 +39,8 @@ enum FavouriteJokeFirestoreService {
         }
     }//close func
 
+    
+    //func get joke from firebase
     /// Fetches the favourites array from the single document and parses it into `[Joke]`.
     /// get data from firebase and give joke array
     static func getJokes(completion: @escaping (Result<[Joke], Error>) -> Void) {
@@ -66,5 +69,38 @@ enum FavouriteJokeFirestoreService {
 
             completion(.success(jokes))
         }
-    }
+    }//end save joke func
+    
+    //func  delete joke from firebase
+    static func deleteJoke(_ joke: Joke, completion: @escaping (Result<Void, Error>) -> Void) {
+        docRef.getDocument { snapshot, error in
+            if let error = error {
+                print("Error getting document: \(error)")
+                completion(.failure(error))
+                return
+            }
+
+            guard let data = snapshot?.data() else {
+                completion(.success(()))
+                return
+            }
+
+            var rawArray = data[arrayField] as? [[String: Any]] ?? []
+
+            rawArray.removeAll { dict in
+                let question = dict["question"] as? String
+                let answer = dict["answer"] as? String
+                return question == joke.question && answer == joke.answer
+            }
+//below after delete remove all then we update below
+            docRef.setData([arrayField: rawArray]) { error in
+                if let error = error {
+                    print("Error updating document: \(error)")
+                    completion(.failure(error))
+                } else {
+                    completion(.success(()))
+                }
+            }
+        }
+    }// end joke func
 }

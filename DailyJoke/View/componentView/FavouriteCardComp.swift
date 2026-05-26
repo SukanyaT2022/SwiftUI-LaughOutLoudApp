@@ -9,8 +9,43 @@ import SwiftUI
 
 struct FavouriteCardComp: View {
     let singleJoke: Joke
+    
+    //line below update closure function with no name - this help to us to give call back to back of screen
+    //screen when detete favourite
+    let updateChangeVar : (Joke) -> Void
+    
+   let shareURL = URL(string: "https://www.koonmow.com/")!
+    
+ 
     var body: some View {
+        
         ZStack(alignment: .topTrailing) {
+          
+                 Image(systemName: "xmark.circle.fill")
+                     .font(.system(size: 20, weight: .semibold))
+                     .foregroundStyle(.secondary)
+                     .padding(8)
+                     .offset(x:30, y:-22)
+//            ontap when user tap something happen
+                     .onTapGesture {
+                         //delete for me
+                         FavouriteJokeFirestoreService.deleteJoke(singleJoke)  { result in
+                             switch result {
+                             case .success:
+                                 print("Delete Joke Successfully")
+                                 
+                                 //update for me screen when detete favourite--below
+                             updateChangeVar(singleJoke)
+                                 
+                             case .failure(let error):
+                                 // TODO: Surface error to UI if needed
+                                 print("Failed to fetch favourite jokes: \(error)")
+                             }
+                         }
+                     }
+         
+             .padding(8)
+            
             // Card content
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .top, spacing: 12) {
@@ -33,9 +68,9 @@ struct FavouriteCardComp: View {
                 }
                 
                 HStack(spacing: 10) {
-                    
+                   
                     ShareLink(
-                        item: URL(string: "https://www.google.com")!,
+                        item: shareURL,
                         subject: Text(singleJoke.question),
                         message: Text("\(singleJoke.question)\n\(singleJoke.answer)")
                     ) {
@@ -66,18 +101,13 @@ struct FavouriteCardComp: View {
             .shadow(color: .black.opacity(0.3), radius: 8, x: 0, y: 4)
 
             // Close button overlay pinned to top-right of the card
-            HStack(spacing: 0) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .padding(8)
-//                    .background(.thinMaterial, in: Circle())
-                    .offset(x:10, y:-10)
-            }
-            .padding(8)
+          
         }
     }
+//
+//#Preview {
+//    FavouriteCardComp(singleJoke: Joke(question: "Why did the chicken cross the road?", answer: "To get to the other side.")
+//     
+//
+//}
 
-#Preview {
-    FavouriteCardComp(singleJoke: Joke(question: "Why did the chicken cross the road?", answer: "To get to the other side."))
-}
