@@ -4,6 +4,7 @@
 //
 //  Created by TS2 on 4/21/26.
 //
+import Combine
 import SwiftUI
 import AVFoundation
 import Speech
@@ -395,13 +396,10 @@ struct VoiceAssistantView: View {
                 TypewriterText(phrases: subtitlePhrases)
                     
                 // Main title
-                Text("How Can I Make\nYou Laugh Today?")
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
-                    .shadow(color: .white.opacity(0.15), radius: 20)
-                    .padding(.horizontal, 32)
+         Text(isListening ? "I'm listening" : "Tap the mic to speak")
+    .font(.system(size: 22, weight: .semibold))
+    .foregroundColor(.white)
+    .padding(.top, 24)
 
                 Spacer()
 
@@ -424,30 +422,34 @@ struct VoiceAssistantView: View {
 //                }
 
                 
-                // Live voice text — appears as user speaks
-                if isListening && !speechRecognizer.transcribedText.isEmpty {
-                    Text(speechRecognizer.transcribedText)
-                        .font(.system(size: 17, weight: .medium))
-                        .foregroundColor(.white.opacity(0.9))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
-                        .padding(.vertical, 10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 14)
-                                .fill(Color.orange.opacity(0.12))
-                                .overlay(RoundedRectangle(cornerRadius: 14)
-                                    .stroke(Color.orange.opacity(0.3), lineWidth: 1))
-                        )
-                        .padding(.horizontal, 24)
-                        .transition(.opacity)
-                }
 
                 
-                
-                // Orb
-                GlowingOrbView(isAnimating: .constant(true), isListening: $isListening)
-                    .frame(width: 340, height: 340)
+                // listening wave bring wave comp here
+            ListeningWaveformViewComp(
+                isActive: isListening,
+                audioLevel: 0
+            )
+            .padding(.vertical, 32)
 
+                // Live cange voice to text — appears as user speaks
+              if isListening && !speechRecognizer.transcribedText.isEmpty {
+    LiveTranscriptViewComp(fullText: speechRecognizer.transcribedText)
+        .transition(.opacity)
+}
+//bottom tap comp arrow mic X
+VoiceControlBarComp(
+    isListening: $isListening,
+    speechRecognizer: speechRecognizer,
+    onSwap: { /* e.g. toggle keyboard or language */ },
+    onClose: {
+        if speechRecognizer.isRecording {
+            speechRecognizer.stopListening()
+            isListening = false
+        }
+        // Close any presented sheets
+        showJokeSwipe = false
+    }
+)
                 Spacer()
 
                 // Keyboard toggle hint
@@ -494,7 +496,7 @@ struct VoiceAssistantView: View {
             }
         }
         .ignoresSafeArea()
-        .preferredColorScheme(.light)
+        .preferredColorScheme(.dark)
         
         .onAppear {
             // Ask for mic + speech permission when screen loads
@@ -622,3 +624,4 @@ struct VoiceAssistantView: View {
 #Preview {
     VoiceAssistantView()
 }
+

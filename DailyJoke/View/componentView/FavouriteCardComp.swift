@@ -14,7 +14,7 @@ struct FavouriteCardComp: View {
     //screen when detete favourite
     let updateChangeVar : (Joke) -> Void
     
-   let shareURL = URL(string: "https://www.koonmow.com/")!
+   let shareURL = URL(string: "https://joke-app-landing-page.vercel.app/")!
     
  
     var body: some View {
